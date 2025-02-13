@@ -1,0 +1,13 @@
+35 minute work sessions:
+
+Credit Scoring:
+Fix initial credit score model to focus on binary classification of default (not accept/reject)
+Add details about what the code is doing.
+Consider converting into .py file
+
+SQL:
+Advance with textbook
+Set up initial schema
+
+Power BI refresher:
+Reminder of what it involves.
