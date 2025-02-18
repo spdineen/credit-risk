@@ -1,0 +1,50 @@
+ 1. Importing Data 
+PROC IMPORT DATAFILE=CUsersSeanDcredit-risk-projectSASdatasample_data.csv 
+    OUT=work.sample_data
+    DBMS=CSV REPLACE;
+    GETNAMES=YES;
+RUN;
+
+ 2. Basic Data Exploration 
+PROC CONTENTS DATA=work.sample_data; RUN;
+PROC MEANS DATA=work.sample_data N MEAN MEDIAN MIN MAX; RUN;
+PROC FREQ DATA=work.sample_data; TABLES credit_score delinquency_status; RUN;
+
+ 3. Data Cleaning 
+DATA work.cleaned_data;
+    SET work.sample_data;
+     Handling missing values 
+    IF missing(credit_score) THEN credit_score = 600;  Default score 
+     Converting categorical variable 
+    IF delinquency_status = 'Yes' THEN delinquent = 1;
+    ELSE IF delinquency_status = 'No' THEN delinquent = 0;
+RUN;
+
+ 4. Logistic Regression for Credit Scoring 
+PROC LOGISTIC DATA=work.cleaned_data DESCENDING;
+    CLASS employment_status (REF='Unemployed')  PARAM=REF;
+    MODEL delinquent = credit_score income loan_amount;
+    OUTPUT OUT=work.scoring_results PREDICTED=probability_of_default;
+RUN;
+
+ 5. Creating a Risk Segmentation 
+PROC RANK DATA=work.cleaned_data OUT=work.ranked_groups GROUPS=5;
+    VAR credit_score;
+    RANKS risk_group;
+RUN;
+
+ 6. Reporting 
+PROC REPORT DATA=work.ranked_groups NOWD;
+    COLUMNS risk_group credit_score loan_amount;
+    DEFINE risk_group  GROUP;
+    DEFINE credit_score  ANALYSIS MEAN;
+    DEFINE loan_amount  ANALYSIS SUM;
+RUN;
+
+ 7. Macro for Automated Reporting 
+%MACRO generate_report(dataset);
+    PROC MEANS DATA=&dataset N MEAN MEDIAN MIN MAX;
+    RUN;
+%MEND generate_report;
+
+%generate_report(work.cleaned_data);
