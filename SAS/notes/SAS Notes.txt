@@ -476,11 +476,16 @@ After the IF-THEN-DO statement, list any number of executable statements.
 
 Close each DO block with an END statement.
 
+#### Lesson 5: Analysing and reporting on Data
 
 
 
+Using Titles and Footnotes: Title is a global statement
 
 
+You can use the label statement to add descriptions to columns.
+
+If you use a label statement in a data step it will permanently assign a label column in the output dataset.
 
 
 
